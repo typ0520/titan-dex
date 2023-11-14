@@ -10,3 +10,5 @@ include ':dex-test'
 include ':dex-linker'
 include ':dex-analyzer'
 // titan-dex end
+include 'scan-dex-class-method-field'
+
