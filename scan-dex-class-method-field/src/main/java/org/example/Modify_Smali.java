@@ -77,7 +77,7 @@ public class Modify_Smali {
             @Override
             public DexClassVisitor visitClass(DexClassVisitorInfo classInfo) {
                 DexClassVisitor dexClassVisitor = super.visitClass(classInfo);
-                if ("Lcom/example/smali_modify_demo/MainActivity;".equals(classInfo.type.toTypeDescriptor())) {
+                if ("Lcom/baidu/titan/dex/sample/MainActivity;".equals(classInfo.type.toTypeDescriptor())) {
                     return new DexClassVisitor(dexClassVisitor){
                         @Override
                         public DexMethodVisitor visitMethod(DexMethodVisitorInfo methodInfo) {
@@ -112,11 +112,6 @@ public class Modify_Smali {
                                             @Override
                                             public void visitRegisters(int localRegCount, int parameterRegCount) {
                                                 super.visitRegisters(localRegCount + 2, parameterRegCount);
-                                            }
-
-                                            @Override
-                                            public void visitConstInsn(int op, DexRegisterList regs, DexConst dexConst) {
-                                                super.visitConstInsn(op, regs, dexConst);
                                             }
                                         };
                                     }
