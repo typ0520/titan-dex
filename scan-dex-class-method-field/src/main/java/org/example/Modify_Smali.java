@@ -88,22 +88,32 @@ public class Modify_Smali {
                                     @Override
                                     public DexCodeVisitor visitCode() {
                                         DexCodeVisitor dexCodeVisitor = super.visitCode();
-                                        // new-instance v0, Ljava/lang/RuntimeException;
-                                        // const-string v1, "ErrorMock throwRuntimeException"
-                                        // invoke-direct {v0, v1}, Ljava/lang/RuntimeException;-><init>(Ljava/lang/String;)V
-
+                                        /**
+                                         *     new-instance v0, Ljava/lang/RuntimeException;
+                                         *     const-string v1, "ErrorMock throwRuntimeException"
+                                         *     invoke-direct {v0, v1}, Ljava/lang/RuntimeException;-><init>(Ljava/lang/String;)V
+                                         *     throw v0
+                                         */
                                         dexCodeVisitor.visitConstInsn(Dops.NEW_INSTANCE
-                                                , DexRegisterList.newBuilder().addReg(DexRegister.make(0)).build()
+                                                , DexRegisterList.newBuilder().addReg(DexRegister.makeLocalReg(0)).build()
                                                 , DexConst.ConstType.make(new DexType("Ljava/lang/RuntimeException;")));
 
                                         dexCodeVisitor.visitConstInsn(Dops.CONST_STRING
-                                                , DexRegisterList.newBuilder().addReg(DexRegister.make(1)).build()
+                                                , DexRegisterList.newBuilder().addReg(DexRegister.makeLocalReg(1)).build()
                                                 , DexConst.ConstString.make("ErrorMock throwRuntimeException"));
 
                                         dexCodeVisitor.visitConstInsn(Dops.INVOKE_DIRECT
-                                                , DexRegisterList.newBuilder().addReg(DexRegister.make(0)).addReg(DexRegister.make(1)).build()
+                                                , DexRegisterList.newBuilder().addReg(DexRegister.makeLocalReg(0)).addReg(DexRegister.makeLocalReg(1)).build()
                                                 , DexConst.ConstMethodRef.make(new DexType("Ljava/lang/RuntimeException;"), new DexString("<init>"), new DexType("V"), DexTypeList.newBuilder().addType(new DexType("Ljava/lang/String;")).build()));
+
+                                        dexCodeVisitor.visitSimpleInsn(Dops.THROW
+                                                , DexRegisterList.newBuilder().addReg(DexRegister.makeLocalReg(0)).build());
                                         return new DexCodeVisitor(dexCodeVisitor) {
+                                            @Override
+                                            public void visitRegisters(int localRegCount, int parameterRegCount) {
+                                                super.visitRegisters(localRegCount + 2, parameterRegCount);
+                                            }
+
                                             @Override
                                             public void visitConstInsn(int op, DexRegisterList regs, DexConst dexConst) {
                                                 super.visitConstInsn(op, regs, dexConst);
@@ -122,6 +132,8 @@ public class Modify_Smali {
         };
 
         DexFileReader reader = new DexFileReader(getFileContent(dexFile));
+
+
         reader.accept(writer);
 
         File outDexFile = new File(testBase, "out.dex");

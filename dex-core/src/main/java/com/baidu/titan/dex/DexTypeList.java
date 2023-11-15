@@ -28,7 +28,7 @@ import java.util.List;
  * @since 2017/10/10
  */
 
-public class DexTypeList implements Comparable<DexTypeList>, Iterable<DexType> {
+public class  DexTypeList implements Comparable<DexTypeList>, Iterable<DexType> {
 
     private static final DexTypeList EMPTY = new DexTypeList(new DexType[0]);
 
